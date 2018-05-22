@@ -18,9 +18,7 @@ HOST = 'localhost'
 PORT = 55555
 BUFSIZ = 4096
 client_sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-host = HOST
-port = PORT
-sock_addr = (host, int(port))
+sock_addr = (HOST, int(PORT))
 
 try :
     client_sock.connect(sock_addr)
@@ -146,13 +144,15 @@ class HookManager(threading.Thread):
 
     def cancel(self):
         try:
-            client_sock.shutdown(1)
+            client_sock.send("Connection Closed".encode('utf-8'))
+            client_sock.shutdown(2)
             client_sock.close()
         except:
         	pass
         self.finished.set()
         self.local_dpy.record_disable_context(self.ctx)
         self.local_dpy.flush()
+        raise SystemExit(0)
 
     def printevent(self, event):
         print(event)
@@ -495,6 +495,10 @@ if __name__ == '__main__':
 #    hm.MouseAllButtonsDown = hm.printevent
 #    hm.MouseAllButtonsUp = hm.printevent
 #    hm.MouseMovement = hm.printevent
-    hm.start()
-    time.sleep(10)
-    hm.cancel()
+    try:
+        hm.start()
+    except KeyboardInterrupt:
+        hm.cancel()
+#    hm.start()
+#    time.sleep(10)
+#    hm.cancel()
