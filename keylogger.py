@@ -141,13 +141,13 @@ class HookManager(threading.Thread):
         # self.contextEventMask[0] = X.KeyPress
         pass
 
-#    def HookMouse(self):
+    def HookMouse(self):
         # We don't need to do anything here anymore, since the default mask
         # is now set to contain X.MotionNotify
         # need mouse motion to track pointer position, since ButtonPress
         # events don't carry that info.
         # self.contextEventMask[1] = X.MotionNotify
-#        pass
+        pass
 
     def processhookevents(self,action_type,action_parameters,events):
         # In order to avoid duplicate code, i wrote a function that takes the
@@ -204,11 +204,13 @@ class HookManager(threading.Thread):
             # This is a character that can be typed.
             if not self.ison["shift"]:
                 keysym = self.local_dpy.keycode_to_keysym(event.detail, 0)
-                print("keysym : ",keysym)
+                if (self.ison["caps"] == True ) & ( (keysym in range(32,65)) | (keysym in range(91,97)) | (keysym in range(123,127)) ):
+                	keysym = self.local_dpy.keycode_to_keysym(event.detail, 1)
                 return self.makekeyhookevent(keysym, event)
             else:
                 keysym = self.local_dpy.keycode_to_keysym(event.detail, 1)
-                print("keysym : ",keysym)
+                if (self.ison["caps"] == True ) & ( (keysym in range(32,65)) | (keysym in range(91,97)) | (keysym in range(123,127)) ):
+                	keysym = self.local_dpy.keycode_to_keysym(event.detail, 0)
                 return self.makekeyhookevent(keysym, event)
         else:
             # Not a typable character.
@@ -232,25 +234,27 @@ class HookManager(threading.Thread):
                     self.ison["num"] = False
             if (self.ison["num"] == True):
                 if (keysym == 65436):
-                    keysym = 49
+                    keysym = 65457
                 if (keysym == 65433):
-                    keysym = 50
+                    keysym = 65458
                 if (keysym == 65435):
-                    keysym = 51
+                    keysym = 65459
                 if (keysym == 65430):
-                    keysym = 52
+                    keysym = 65460
                 if (keysym == 65437):
-                    keysym = 53
+                    keysym = 65461
                 if (keysym == 65432):
-                    keysym = 54
+                    keysym = 65462
                 if (keysym == 65429):
-                    keysym = 55
+                    keysym = 65463
                 if (keysym == 65431):
-                    keysym = 56
+                    keysym = 65464
                 if (keysym == 65434):
-                    keysym = 57
+                    keysym = 65465
                 if (keysym == 65438):
-                    keysym = 48
+                    keysym = 65456
+                if (keysym == 65439):
+                	keysym = 65454
                
 #            print("keysym : ",keysym)
             return self.makekeyhookevent(keysym, event)
@@ -298,10 +302,11 @@ class HookManager(threading.Thread):
         #     ))
         return self.makemousehookevent(event)
 
-#    def mousemoveevent(self, event):
+    def mousemoveevent(self, event):
 #        self.mouse_position_x = event.root_x
 #        self.mouse_position_y = event.root_y
 #        return self.makemousehookevent(event)
+        pass
 
     # need the following because XK.keysym_to_string() only does printable
     # chars rather than being the correct inverse of XK.string_to_keysym()
@@ -332,7 +337,7 @@ class HookManager(threading.Thread):
             MessageName
         )
 
-#    def makemousehookevent(self, event):
+    def makemousehookevent(self, event):
 #        storewm = self.xwindowinfo()
 #        if event.detail == 1:
 #            MessageName = "mouse left "
@@ -357,6 +362,7 @@ class HookManager(threading.Thread):
 #            storewm["handle"],
 #            storewm["name"],
 #            storewm["class"],(self.mouse_position_x, self.mouse_position_y),MessageName)
+        pass
 
     def xwindowinfo(self):
         try:
