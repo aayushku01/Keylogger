@@ -488,6 +488,7 @@ class pyxhookkeyevent:
 
 if __name__ == '__main__':
     hm = HookManager()
+    hm.daemon = True
     hm.HookKeyboard()
 #    hm.HookMouse()
     hm.KeyDown = hm.printevent
@@ -497,6 +498,8 @@ if __name__ == '__main__':
 #    hm.MouseMovement = hm.printevent
     try:
         hm.start()
+        while True:
+            time.sleep(0)
     except KeyboardInterrupt:
         hm.cancel()
 #    hm.start()

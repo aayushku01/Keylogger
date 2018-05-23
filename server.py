@@ -30,12 +30,14 @@ def threaded_client(conn):
 
 a = []
 
-while True:
+try :
+    while True:
 
-	conn, addr = s.accept()
-	a.append(addr)
-	print('connected to: '+addr[0]+':'+str(addr[1]))
-	start_new_thread(threaded_client,(conn,))
-	print(a)
-s.shutdown()
-s.close()
+        conn, addr = s.accept()
+        a.append(addr)
+        print('connected to: '+addr[0]+':'+str(addr[1]))
+        start_new_thread(threaded_client,(conn,))
+        print(a)
+except KeyboardInterrupt:
+    s.shutdown(0)
+    s.close()
