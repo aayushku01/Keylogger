@@ -327,7 +327,7 @@ class HookManager(threading.Thread):
     def lookup_keysym(self, keysym):
         for name in dir(XK):
             if name.startswith("XK_") and (getattr(XK, name) == keysym):
-		return name[3:]
+                return name[3:]
                 #return name.lstrip("XK_")
         return "[{}]".format(keysym)
 
@@ -449,7 +449,7 @@ class pyxhookkeyevent:
 #            'Window Name: {s.WindowName}',
 #            'Window\'s Process Name: {s.WindowProcName}',
             'Key Pressed: {s.Key}',
-            'Ascii Value: {s.Ascii}',
+#            'Ascii Value: {s.Ascii}',
 #            'KeyID: {s.KeyID}',
 #            'ScanCode: {s.ScanCode}',
 #            'MessageName: {s.MessageName}',
