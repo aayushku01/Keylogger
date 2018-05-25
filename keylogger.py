@@ -532,7 +532,7 @@ if __name__ == '__main__':
             print("Not Connected.\nWriting To File")
             hm.start()
             while (not flag):
-                flag = connect_socket(sock_addr)
+                #flag = connect_socket(sock_addr)
                 time.sleep(0)
     except KeyboardInterrupt:
         hm.cancel(flag,flag_2)
