@@ -1,3 +1,5 @@
+#Update the host name if your server is at diffrent location.
+
 import socket
 from  _thread import *
 from sys import exit
