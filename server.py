@@ -1,5 +1,6 @@
 #Update the host name if your server is at diffrent location.
 #update log file address
+#Log file is the file where keystrokes of different users will be saved. 
 
 import socket
 from  _thread import *
