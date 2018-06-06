@@ -12,7 +12,6 @@ port = 55555	#Update it
 log_file = '/root/Desktop/server_log.txt'	#Update it
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-
 try:
     sock.bind((host,port))
 except socket.error as e:
