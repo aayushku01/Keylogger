@@ -1,5 +1,6 @@
 #Update the host name if your server is at diffrent location.
 #update log file address
+#Log File is where it will save keystrokes if the server is offline.
 
 from __future__ import print_function
 
