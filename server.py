@@ -11,7 +11,7 @@ port = 55555	#Update it
 log_file = '/root/Desktop/server_log.txt'	#Update it
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-
+fopen = open(log_file,'a')
 try:
     sock.bind((host,port))
 except socket.error as e:
@@ -23,7 +23,7 @@ sock.listen(5)
 print('Waiting...')
 
 def threaded_client(conn):
-    global a,fopen
+    global a
     while True:
         data = conn.recv(2048)
         if not data:
@@ -33,10 +33,8 @@ def threaded_client(conn):
             a.remove(conn.getpeername())
             fopen.close()
             break
-        fopen = open(log_file,'a')
         fopen.write("From("+ conn.getpeername()[0] + ":"+ str(conn.getpeername()[1])+")->" + data.decode('utf-8'))
         fopen.write('\n')
-        fopen.close()
     conn.shutdown(1)
     conn.close()
 
